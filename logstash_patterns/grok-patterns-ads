@@ -1,2 +1,7 @@
 COMBINDEDWITHRESPTIME %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{NUMBER:resptime}
 COMBINEDWITHCOOKIE %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
+ADSSERVERDATE %{YEAR:year}\s+%{MONTHNUM:month}\s+%{MONTHDAY:day}\s+%{INT:hour}\s+%{INT:minute}\s+%{INT:second}
+BIBCODE %{YEAR}[A-Za-z0-9&\.]{15}
+STARTPAGE [A-Za-z0-9\d:\/\.]+
+ADSDATASERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:clientip}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:link}\s+%{BIBCODE:bibcode}\s+%{URI:service}(\s+%{URI:referrer})?
+ADSBITSERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:clientip}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:return_type}\s+%{INT:error}\s+%{INT:returned}\s+%{STARTPAGE:start_page}\s+%{WORD:data_type}\s+%{BIBCODE:bibcode}
