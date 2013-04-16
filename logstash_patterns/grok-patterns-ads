@@ -1,7 +1,41 @@
+# current BEER log format
 COMBINDEDWITHRESPTIME %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{NUMBER:resptime}
+
+# classic ADS format
 COMBINEDWITHCOOKIE %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
+
+# ADS server log has dumb datestamp format
 ADSSERVERDATE %{YEAR:year}\s+%{MONTHNUM:month}\s+%{MONTHDAY:day}\s+%{INT:hour}\s+%{INT:minute}\s+%{INT:second}
+
+# basic bibcode
 BIBCODE %{YEAR}[A-Za-z0-9&\.]{15}
+
+# start page can have numbers, letters and a couple of other char possibilities
 STARTPAGE [A-Za-z0-9\d:\/\.]+
+
+# ADS data_server.log format
 ADSDATASERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:clientip}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:link}\s+%{BIBCODE:bibcode}\s+%{URI:service}(\s+%{URI:referrer})?
+
+# ADS bit_server.log format
 ADSBITSERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:clientip}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:return_type}\s+%{INT:error}\s+%{INT:returned}\s+%{STARTPAGE:start_page}\s+%{WORD:data_type}\s+%{BIBCODE:bibcode}
+
+# known bots
+GOOGLEBOT \.googlebot\.com$
+MSNBOT \.search\.live\.com$
+YAHOOBOT \.crawl\.yahoo\.net$
+ALEXABOT \.alexa\.com$
+IOPBOT \.ioppublishing\.com$
+CUILLBOT \.cuill\.com$
+ASKBOT \.ask\.com$
+BOTHOST (%{GOOGLEBOT}|%{MSNBOT}|%{YAHOOBOT}|%{ALEXABOT}|%{IOPBOT}|%{CUILLBOT}|%{ASKBOT})
+
+# known "clients"
+SCICLIENT \.deepwebtech\.com$
+STICLIENT \.osti\.gov$
+STSCIBOT \archdev\.stsci\.edu$
+SPIECLIENT \comet\.spie\.org$
+CLIENTHOST (%{SCICLIENT}|%{STICLIENT}|%{STSCIBOT}|%{SPIECLIENT})
+
+# capture bot or client id
+BOTORCLIENT (%{BOTHOST}|%{CLIENTHOST})
+
