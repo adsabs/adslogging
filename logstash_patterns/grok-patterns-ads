@@ -1,11 +1,11 @@
 # current BEER log format
-COMBINDEDWITHRESPTIME %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{NUMBER:resptime}
+COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{NUMBER:resptime}
 
 # classic ADS format
-COMBINEDWITHCOOKIE %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
+COMBINEDWITHCOOKIE %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
 
 # ADS server log has dumb datestamp format
-ADSSERVERDATE %{YEAR:year}\s+%{MONTHNUM:month}\s+%{MONTHDAY:day}\s+%{INT:hour}\s+%{INT:minute}\s+%{INT:second}
+ADSSERVERDATE %{YEAR}\s+%{MONTHNUM}\s+%{MONTHDAY}\s+%{INT}\s+%{INT}\s+%{INT}
 
 # basic bibcode
 BIBCODE %{YEAR}[A-Za-z0-9&\.]{15}
@@ -14,10 +14,10 @@ BIBCODE %{YEAR}[A-Za-z0-9&\.]{15}
 STARTPAGE [A-Za-z0-9\d:\/\.]+
 
 # ADS data_server.log format
-ADSDATASERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:clientip}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:link}\s+%{BIBCODE:bibcode}\s+%{URI:service}(\s+%{URI:referrer})?
+ADSDATASERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:client_addr}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:link}\s+%{BIBCODE:bibcode}\s+%{URI:service}(\s+%{URI:referrer})?
 
 # ADS bit_server.log format
-ADSBITSERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:clientip}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:return_type}\s+%{INT:error}\s+%{INT:returned}\s+%{STARTPAGE:start_page}\s+%{WORD:data_type}\s+%{BIBCODE:bibcode}
+ADSBITSERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPORHOST:client_addr}\s+%{WORD:user}\s+%{WORD:db}\s+%{WORD:return_type}\s+%{INT:error}\s+%{INT:returned}\s+%{STARTPAGE:start_page}\s+%{WORD:data_type}\s+%{BIBCODE:bibcode}
 
 # known bots
 GOOGLEBOT \.googlebot\.com$
@@ -39,3 +39,6 @@ CLIENTHOST (%{SCICLIENT}|%{STICLIENT}|%{STSCIBOT}|%{SPIECLIENT})
 # capture bot or client id
 BOTORCLIENT (%{BOTHOST}|%{CLIENTHOST})
 
+APACHEERRORTIME %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}
+APACHEERRORPREFIX \[%{APACHEERRORTIME:timestamp}\] \[%{NOTSPACE:apacheseverity}\](?: \[client %{IPORHOST:client_addr}\])?
+GENERICAPACHEERROR %{APACHEERRORPREFIX} %{GREEDYDATA:message}
