@@ -1,5 +1,5 @@
 # current BEER log format
-COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{NUMBER:resptime}
+COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy} %{NUMBER:resptime}
 
 # classic ADS format
 COMBINEDWITHCOOKIE %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}

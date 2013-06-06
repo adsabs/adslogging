@@ -1,0 +1,13 @@
+[beaver]
+
+# transport: redis
+# redis_url: redis://localhost:6379/0
+# redis_namespace: adsabs:hostname:logs
+
+# [/path/to/some/log/file]
+# type: atype
+# tags: atag,anothertag
+
+# [/path/to/lome/logs/using/globs.log.???.2???]
+# type: anothertype
+# tags: moretags
