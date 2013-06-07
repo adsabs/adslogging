@@ -1,8 +1,11 @@
+# allow "&" in uri paths due to their appearance in some bibcodes
+URIPATHWITHAMP (?:/[A-Za-z0-9$&.+!*'(){},~:;=#%_\-]*)+
+
 # current BEER log format
-COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy} %{NUMBER:resptime}
+COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATHWITHAMP:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy} %{NUMBER:resptime}
 
 # classic ADS format
-COMBINEDWITHCOOKIE %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATH:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
+COMBINEDWITHCOOKIE %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATHWITHAMP:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:httpversion})?)" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
 
 # ADS server log has dumb datestamp format
 ADSSERVERDATE %{YEAR}\s+%{MONTHNUM}\s+%{MONTHDAY}\s+%{INT}\s+%{INT}\s+%{INT}
