@@ -1,0 +1,9 @@
+{
+    default : {
+        "date_detection" : false,
+        "properties" : {
+            "@timestamp" :
+            { "type" : "date", "format" : "dateOptionalTime" }
+        }
+    }
+}
