@@ -29,15 +29,17 @@ input {
     # this list is populated by the beaver daemon reading from log files
     redis {
         host => 'localhost' data_type => 'list' format => "json_event"
-        type => 'beer-logs' 
-        key => 'adsabs:adsx:logs'
-        tags => ['beer','logs','apache','access']
+        key => 'adsabs:logs'
+        tags => ['beer','logs','apache']
+        type => "_unset" # shippers are responsible for setting event 'type'
     }
+    # this list is populated by either beaver or skidder (for backfilling)
     redis {
         host => 'localhost' data_type => 'list' format => 'json_event'
-        type => 'classic-logs' 
-        key => 'skidder:classic:logs' threads => 4
-        tags => ['classic','logs','apache','access']
+        key => 'classic:logs'
+        threads => 4
+        tags => ['classic','logs','apache']
+        type => "_unset" # shippers are responsible for setting event 'type'
     }
 }
 
