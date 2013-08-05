@@ -194,7 +194,7 @@ filter {
     # prune stuff to keep the ES index size from blowing up
     mutate {
         tags => ["apache","access"]
-        remove => ["cookie","agent","qstring","@message"]
+        remove => ["cookie","agent","qstring"]
     }
 }
 
