@@ -45,3 +45,8 @@ BOTORCLIENT (%{BOTHOST}|%{CLIENTHOST})
 APACHEERRORTIME %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}
 APACHEERRORPREFIX \[%{APACHEERRORTIME:timestamp}\] \[%{NOTSPACE:apacheseverity}\](?: \[client %{IPORHOST:client_addr}\])?
 GENERICAPACHEERROR %{APACHEERRORPREFIX} %{GREEDYDATA:message}
+
+# Solr logs
+SOLRDATE %{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}
+SOLRLOG %{SOLRDATE:timestamp} %{LOGLEVEL:loglevel} %{NOTSPACE:class} %{WORD:method} (?:\[%{WORD:core}\] )%{GREEDYDATA:data}
+SOLREXCEPTION %{SOLRDATE:timestamp} %{LOGLEVEL:loglevel} %{NOTSPACE:class} %{WORD:method} %{GREEDYDATA:stacktrace}

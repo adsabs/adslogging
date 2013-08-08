@@ -41,6 +41,12 @@ input {
         tags => ['classic','logs','apache']
         type => "_unset" # shippers are responsible for setting event 'type'
     }
+    redis {
+        host => 'localhost' data_type => 'list' format => 'json_event'
+        key => 'solr:logs'
+        tags => ['solr','logs']
+        type => "_unset" # shippers are responsible for setting event 'type'
+    }
 }
 
 filter {
@@ -78,6 +84,38 @@ filter {
         tag_on_failure => false
     }
 
+    multiline {
+        tags => ["solr"]
+        pattern => "^\s+"
+        negate => false
+        what => "previous"
+    }
+
+    grep {
+        match => ["@message", "Exception"]
+        drop => false
+        add_tag => ["exception","multiline"]
+    }
+
+    grok {
+        patterns_dir => "./adslogging/logstash_patterns"
+        tags => ["solr","exception"]
+        match => ["@message", "(?m)%{SOLREXCEPTION}"]
+    }
+
+    # should handle dates for classic & beer apache access
+    date {
+        tags => ["solr"]
+        match => [ "timestamp", "yyyy-MM-dd HH:mm:ss" ]
+    }
+
+    grok {
+        patterns_dir => "./adslogging/logstash_patterns"
+        tags => ["solr"]
+        exclude_tags => ["exception"]
+        match => ["@message", "%{SOLRLOG}"]
+    }
+
     # remove quotes from some values
     mutate {
         tags => ["apache","access"]
@@ -112,6 +150,24 @@ filter {
         add_tag => ["kv_applied"]
     }
 
+    kv {
+        tags => ["solr"]
+        exclude_tags => ["exception"]
+        source => ["data"]
+        field_split => " "
+        value_split => "="
+        trim => "{}"
+    }
+
+    kv {
+        tags => ["solr"]
+        exclude_tags => ["exception"]
+        source => ["params"]
+        prefix => "param__"
+        field_split => "&"
+        value_split => "="
+    }
+
     ruby {
         tags => ["kv_applied"]
         code => "event['@fields'] = event['@fields'].delete_if { |key, value| key.to_s.length > 30 and (key.to_s.start_with?('cookie__') or key.to_s.start_with?('qstring__')) }"
@@ -123,6 +179,21 @@ filter {
         match => ["path", "/api/"]
         drop => false
         add_tag => ["api"]
+    }
+
+    grep {
+        tags => ["solr"]
+        exclude_tags => ["exception"]
+        match => ["path", "\/ping$"]
+        negate => true
+    }
+
+    grep {
+        tags => ["solr"]
+        exclude_tags => ["exception"]
+        match => ["path", "\/select$"]
+        add_tag => ["search"]
+        drop => false
     }
 
 ########################################################################
