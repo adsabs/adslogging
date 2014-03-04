@@ -1,5 +1,6 @@
 input { 
     # used for testing
+    # send stuff to logstash via netcat: `echo "foo" | nc localhost 3333`
     tcp { type => "ads" port => 3333 tags => ["beer","apache","access"] }
     tcp { type => "ads" port => 3334 tags => ["classic","apache","access"] }
     tcp { type => "ads" port => 3335 tags => ["bit_server"] }
