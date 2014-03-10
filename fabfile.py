@@ -1,4 +1,5 @@
 import os
+from os.path import basename, splitext
 from fabric.api import task, env, run as do
 from fabric.context_managers import settings, cd
 from fabric.decorators import with_settings
@@ -8,7 +9,9 @@ env.hosts = ['adswhy']
 
 deploy_path = '/proj/adswhy/logstash'
 logstash_dist = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.beta2.tar.gz'
+logstash_dir = splitext(splitext(basename(logstash_dist))[0])
 es_dist = 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.tar.gz'
+es_dir = splitext(splitext(basename(es_dist))[0])
 
 @task
 @with_settings(warn_only=True)
@@ -31,4 +34,7 @@ def build():
 @task
 @with_settings(warn_only=True)
 def run():
-    pass
+    # run elasticsearch
+    # run redis
+    # run logstash
+    # run beaver
