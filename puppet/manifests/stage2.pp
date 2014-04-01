@@ -9,8 +9,8 @@ class { 'redis':
 }
 
 class { 'logstash':
-  package_url => 'http://packages.elasticsearch.org/logstash/1.3/debian/pool/main/l/logstash/logstash_1.3.3-1debian_all.deb',
-  version => false,
+  manage_repo => true,
+  repo_version => '1.4',
   restart_on_change => false,
   status => 'running',
   init_defaults_file => '/vagrant/logstash/logstash_defaults',
@@ -18,8 +18,8 @@ class { 'logstash':
 }
 
 class { 'elasticsearch':
-  package_url => 'http://packages.elasticsearch.org/elasticsearch/1.0/debian/pool/main/e/elasticsearch/elasticsearch-1.0.1.deb',
-  version => false,
+  manage_repo => true,
+  repo_version => '1.1.0',
   status => 'running',
   config => {
     'node' => {
@@ -58,4 +58,4 @@ file { '/etc/logstash/patterns/ads-patterns':
 }
 
 # "This installs Kibana and starts it running on port 5601 and connects to an Elasticsearch index running on localhost:9200"
-include 'kibana'
+#include 'kibana'

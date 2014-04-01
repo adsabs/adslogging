@@ -8,7 +8,7 @@ LS_JAVA_OPTS="-Xmx256m -Djava.io.tmpdir=/var/lib/logstash/"
 
 PIDFILE=/var/run/logstash.pid
 
-# location of the logstas jar file
+# location of the logstash jar file
 LS_JAR=/opt/logstash/logstash.jar
 
 # Set LogStash options
