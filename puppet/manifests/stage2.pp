@@ -1,6 +1,10 @@
 #Set global path for exec calls
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin" ] }
 
+class { 'nodejs':
+  version => 'stable',
+}
+
 class { 'graphite': }
 
 class { 'statsd':
@@ -10,7 +14,7 @@ class { 'statsd':
   address          => '10.20.1.2',
   listenport       => 2158,
   provider         => npm,
-  require => [Class[graphite]],
+  require => [Class[nodejs], Class[graphite]],
 }
 
 # starts redis on 127.0.0.1:6379
