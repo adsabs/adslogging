@@ -16,6 +16,10 @@ RUN echo 'deb http://packages.elasticsearch.org/logstash/1.4/debian stable main'
 RUN apt-get update
 RUN apt-get install -y build-essential
 RUN fakeroot apt-get install -y openjdk-7-jdk
+
+# add elasticsearch user in advance so that we can specify the uid 1000 (the uid of the vagrant
+# user on the host system)
+RUN adduser --system --home /data --no-create-home -u 1000 --disabled-password elasticsearch
 RUN apt-get install -y elasticsearch logstash supervisor
  
 # Expose ports.
@@ -29,7 +33,6 @@ EXPOSE 9300
 ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash_template.json
 ADD assets/logstash.conf /etc/logstash/logstash.conf
 ADD assets/logstash-patterns /etc/logstash/patterns/patterns
-ADD assets/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Run supervisord

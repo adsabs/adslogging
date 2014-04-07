@@ -55,24 +55,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #  puppet.manifest_file  = "site.pp"
   #end
     
-  # run a container just to hold a shared data volume
-  config.vm.provision "docker" do |docker|
-    docker.run "adslogging/shared_data",
-      args: "--name shared_data -v /data busybox true"
-  end
-      
   config.vm.provision "docker" do |docker|
     docker.build_image "/vagrant/dockerfiles/logstash",
       args: "-t adslogging/logstash"
     docker.run "adslogging/logstash",
-      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 --volumes-from shared_data"
+      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -v /vagrant/shared_data/elasticsearch:/usr/share/elasticsearch/data"
   end
   
   config.vm.provision "docker" do |docker|
     docker.build_image "/vagrant/dockerfiles/statsd",
       args: "-t adslogging/statsd"
     docker.run "adslogging/statsd",
-      args: "--name statsd -p 8080:8080 -p 8125:8125/udp -p 8126:8126 --volumes-from shared_data"
+      args: "--name statsd -p 8080:8080 -p 8125:8125/udp -p 8126:8126 -v /vagrant/shared_data/graphite:/var/lib/graphite"
   end
 
 end

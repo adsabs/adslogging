@@ -8,8 +8,7 @@
 # Pull base image.
 FROM ubuntu:precise
 
-run mkdir -p /data/graphite/storage /var/run/sshd
-run chown www-data /data/graphite/storage
+run mkdir -p /var/run/sshd
 
 run echo 'deb http://us.archive.ubuntu.com/ubuntu/ precise universe' >> /etc/apt/sources.list
 run apt-get -y update
@@ -38,7 +37,7 @@ add ./assets/carbon.conf /var/lib/graphite/conf/carbon.conf
 add ./assets/storage-schemas.conf /var/lib/graphite/conf/storage-schemas.conf
 run mkdir -p /var/lib/graphite/storage/whisper
 run touch /var/lib/graphite/storage/graphite.db /var/lib/graphite/storage/index
-run chown -R www-data /var/lib/graphite/storage
+run chown -R graphite /var/lib/graphite/storage
 run chmod 0775 /var/lib/graphite/storage /var/lib/graphite/storage/whisper
 run chmod 0664 /var/lib/graphite/storage/graphite.db
 run cd /var/lib/graphite/webapp/graphite && python manage.py syncdb --noinput
@@ -53,5 +52,9 @@ expose  :8080
 #expose  :7002
 # statsd udp/tcp ports
 expose 8125/udp 8126
+
+# create the user that graphite/carbon runs as using
+# note: 1000 is the vagrant uid
+RUN adduser --system --home /var/lib/graphite --no-create-home -u 1000 --disabled-password graphite
 
 cmd ["/usr/bin/supervisord"]
