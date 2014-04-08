@@ -27,7 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # kibana port
   config.vm.network :forwarded_port, guest: 9292, host: 9292
   # graphite admin port
-  config.vm.network :forwarded_port, guest: 8080, host: 8080
+  config.vm.network :forwarded_port, guest: 8001, host: 8001
   # statsd port
   config.vm.network :forwarded_port, guest: 8125, host: 8125, protocol: 'udp'
 
@@ -59,14 +59,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     docker.build_image "/vagrant/dockerfiles/logstash",
       args: "-t adslogging/logstash"
     docker.run "adslogging/logstash",
-      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -v /vagrant/shared_data/elasticsearch:/usr/share/elasticsearch/data"
+      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 " \
+            "-v /vagrant/shared_data/elasticsearch:/usr/share/elasticsearch/data " \
+            "-v /vagrant/shared_data/logs:/var/log"
   end
   
   config.vm.provision "docker" do |docker|
     docker.build_image "/vagrant/dockerfiles/statsd",
       args: "-t adslogging/statsd"
     docker.run "adslogging/statsd",
-      args: "--name statsd -p 8080:8080 -p 8125:8125/udp -p 8126:8126 -v /vagrant/shared_data/graphite:/var/lib/graphite"
+      args: "--name statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 " \
+      "-v /vagrant/shared_data/graphite:/opt/graphite/storage " \
+      "-v /vagrant/shared_data/logs:/var/log"
   end
 
 end
