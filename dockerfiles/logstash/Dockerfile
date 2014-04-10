@@ -17,7 +17,7 @@ RUN apt-get update
 RUN apt-get install -y build-essential
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
-RUN apt-get install -y elasticsearch logstash supervisor redis-server
+RUN apt-get install -y elasticsearch logstash supervisor redis-server wget
  
 ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash_template.json
 ADD assets/logstash.conf /etc/logstash/logstash.conf
@@ -26,6 +26,10 @@ ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 add ./assets/run.sh /run.sh
 run chmod +x /run.sh
+
+# cd to the logstash root directory to do the plugin install
+WORKDIR /opt/logstash
+RUN bin/plugin install contrib
 
 # elasticsearch http
 EXPOSE 9200
