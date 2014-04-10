@@ -56,21 +56,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #end
     
   config.vm.provision "docker" do |docker|
+    docker.run "busybox",
+      args: "--name data -v /data -v /var/log/supervisor",
+      cmd: "true"
+  end
+  
+  config.vm.provision "docker" do |docker|
     docker.build_image "/vagrant/dockerfiles/logstash",
       args: "-t adslogging/logstash"
     docker.run "adslogging/logstash",
-      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 " \
-            "-v /vagrant/shared_data/elasticsearch:/usr/share/elasticsearch/data " \
-            "-v /vagrant/shared_data/logs:/var/log"
+      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -p 6379:6379 " 
   end
   
   config.vm.provision "docker" do |docker|
     docker.build_image "/vagrant/dockerfiles/statsd",
       args: "-t adslogging/statsd"
     docker.run "adslogging/statsd",
-      args: "--name statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 " \
-      "-v /vagrant/shared_data/graphite:/opt/graphite/storage " \
-      "-v /vagrant/shared_data/logs:/var/log"
+      args: "--name statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 " 
   end
 
 end

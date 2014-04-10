@@ -14,10 +14,6 @@ run pip install whisper
 run pip install --install-option="--prefix=/opt/graphite" --install-option="--install-lib=/opt/graphite/lib" carbon
 run pip install --install-option="--prefix=/opt/graphite" --install-option="--install-lib=/opt/graphite/webapp" graphite-web
 
-# create the user that graphite/carbon runs as using
-# note: 1000 is the vagrant uid
-RUN adduser --system --home /opt/graphite --no-create-home -u 1000 --disabled-password graphite
-
 # install statsd
 run /usr/bin/git clone https://github.com/etsy/statsd.git /opt/statsd
 add ./assets/statsd_config.js /opt/statsd/config.js
@@ -39,7 +35,5 @@ run chmod +x /run.sh
 expose 8001
 # statsd udp/tcp ports
 expose 8125/udp 8126
-
-volume ["/opt/graphite/storage"]
 
 cmd ["/run.sh"]

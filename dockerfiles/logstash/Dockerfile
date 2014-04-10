@@ -17,23 +17,23 @@ RUN apt-get update
 RUN apt-get install -y build-essential
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
-# add elasticsearch user in advance so that we can specify the uid 1000 (the uid of the vagrant
-# user on the host system)
-RUN adduser --system --home /data --no-create-home -u 1000 --disabled-password elasticsearch
-RUN apt-get install -y elasticsearch logstash supervisor
- 
-# Expose ports.
-#   - 9200: HTTP
-#   - 9292: Kibana
-#   - 9300: transport
-EXPOSE 9200
-EXPOSE 9292
-EXPOSE 9300
+RUN apt-get install -y elasticsearch logstash supervisor redis-server
  
 ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash_template.json
 ADD assets/logstash.conf /etc/logstash/logstash.conf
 ADD assets/logstash-patterns /etc/logstash/patterns/patterns
 ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Run supervisord
-CMD ["/usr/bin/supervisord"]
+add ./assets/run.sh /run.sh
+run chmod +x /run.sh
+
+# elasticsearch http
+EXPOSE 9200
+# kibana
+EXPOSE 9292
+# elasticsearch transport
+EXPOSE 9300
+# redis
+EXPOSE 6379 
+
+cmd ["/run.sh"]
