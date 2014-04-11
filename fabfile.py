@@ -1,40 +1,34 @@
 import os
-from os.path import basename, splitext
-from fabric.api import task, env, run as do
+from os.path import abspath, dirname
+
+from fabric.api import task, local, env
 from fabric.context_managers import settings, cd
 from fabric.decorators import with_settings
 
-env.gateway = 'pogo3'
-env.hosts = ['adswhy']
+env.base_dir = abspath(dirname(__file__))
+env.run = local
 
-deploy_path = '/proj/adswhy/logstash'
-logstash_dist = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.beta2.tar.gz'
-logstash_dir = splitext(splitext(basename(logstash_dist))[0])
-es_dist = 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.tar.gz'
-es_dir = splitext(splitext(basename(es_dist))[0])
+def docker(cmd):
+    with cd(env.base_dir):
+        return env.run("docker %s" % cmd)
+    
+@task
+def sudo():
+    env.run = lambda x: "sudo " + x
 
 @task
 @with_settings(warn_only=True)
-def build():
-    do('[ -e %s ] || mkdir %s' % (deploy_path, deploy_path))
-    with cd(deploy_path):
-
-        # get logstash
-        do('wget -O %s %s' % (os.path.basename(logstash_dist), logstash_dist))
-        do('tar -xzf %s' % os.path.basename(logstash_dist))
-
-        # get elasticsearch
-        do('wget -O %s %s' % (os.path.basename(es_dist), es_dist))
-        do('tar -xzf %s' % os.path.basename(es_dist))
-        
-        # setup the project stuff and venv
-        do('[ -e adslogging ] || git clone https://github.com/adsabs/adslogging.git')
-        do('[ -e venv ] || virtualenv venv')
+def build(rmi=False):
+    if rmi:
+        docker("rmi adslogging/logstash adslogging/statsd")
+    docker("build -t adslogging/logstash dockerfiles/logstash")
+    docker("build -t adslogging/statsd dockerfiles/statsd")
         
 @task
 @with_settings(warn_only=True)
-def run():
-    # run elasticsearch
-    # run redis
-    # run logstash
-    # run beaver
+def run(rm=False):
+    if rm:
+        docker("rm data adslogging-logstash adslogging-statsd")
+    docker("run -d --name adslogging-data -v /data -v /var/log/supervisor busybox true")
+    docker("run -d --name adslogging-logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -p 6379:6379 --volumes-from adslogging-data adslogging/logstash")
+    docker("run -d --name adslogging-statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 -p 2003:2003 -p 2004:2004 -p 7002:7002 adslogging/statsd")

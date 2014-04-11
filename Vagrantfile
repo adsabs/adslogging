@@ -50,31 +50,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # argument is a set of non-required options.
   config.vm.synced_folder ".", "/vagrant/"
 
+  config.vm.provision :shell, :path => "vagrant_bootstrap.sh"
+  
   #config.vm.provision :puppet do |puppet|
   #  puppet.manifests_path = "puppet/manifests"
   #  puppet.manifest_file  = "site.pp"
   #end
     
-  config.vm.provision "docker" do |docker|
-    docker.run "busybox",
-      args: "--name data -v /data -v /var/log/supervisor",
-      cmd: "true"
-  end
-  
-  config.vm.provision "docker" do |docker|
-    docker.build_image "/vagrant/dockerfiles/logstash",
-      args: "-t adslogging/logstash"
-    docker.run "adslogging/logstash",
-      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -p 6379:6379 " \
-            "--volumes-from data"
-  end
-  
-  config.vm.provision "docker" do |docker|
-    docker.build_image "/vagrant/dockerfiles/statsd",
-      args: "-t adslogging/statsd"
-    docker.run "adslogging/statsd",
-      args: "--name statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 " \
-            "--volumes-from data"
-  end
+#  config.vm.provision "docker" do |docker|
+#    docker.run "busybox",
+#      args: "--name data -v /data -v /var/log/supervisor",
+#      cmd: "true"
+#  end
+#  
+#  config.vm.provision "docker" do |docker|
+#    docker.build_image "/vagrant/dockerfiles/logstash",
+#      args: "-t adslogging/logstash"
+#    docker.run "adslogging/logstash",
+#      args: "--name logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -p 6379:6379 " \
+#            "--volumes-from data"
+#  end
+#  
+#  config.vm.provision "docker" do |docker|
+#    docker.build_image "/vagrant/dockerfiles/statsd",
+#      args: "-t adslogging/statsd"
+#    docker.run "adslogging/statsd",
+#      args: "--name statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 " \
+#            "--volumes-from data"
+#  end
 
 end

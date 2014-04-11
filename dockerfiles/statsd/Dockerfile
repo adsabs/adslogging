@@ -35,5 +35,9 @@ run chmod +x /run.sh
 expose 8001
 # statsd udp/tcp ports
 expose 8125/udp 8126
+# graphite ports
+expose 2003
+expose 2004
+expose 7002
 
 cmd ["/run.sh"]
