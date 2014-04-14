@@ -6,7 +6,6 @@ from fabric.context_managers import settings, cd
 from fabric.decorators import with_settings
 
 env.base_dir = abspath(dirname(__file__))
-env.run = local
 
 config = {
     'logdata': { },
@@ -22,13 +21,16 @@ config = {
 
 IMAGES = ['adslogging/logstash','adslogging/statsd']
 
-def docker(cmd):
+def docker(cmd, sudo=False):
     with cd(env.base_dir):
-        return env.run("docker %s" % cmd)
+        sudo = sudo and "sudo" or ""
+        return local("%s docker %s" % (sudo,cmd))
     
+env.run = docker
+
 @task
 def sudo():
-    env.run = lambda x: "sudo " + x
+    env.run = lambda x: docker(x, True)
 
 @task
 @with_settings(warn_only=True)
@@ -37,8 +39,8 @@ def build(image=None, rmi=False):
         if image is not None and image != name:
             continue
         if rmi:
-            docker("rmi adsabs/%s" % name)
-        docker("build -t adsabs/%s dockerfiles/%s" % (name, name))
+            env.run("rmi adsabs/%s" % name)
+        env.run("build -t adsabs/%s dockerfiles/%s" % (name, name))
         
 @task
 @with_settings(warn_only=True)
@@ -47,12 +49,12 @@ def run(container=None, rm=False, ep=''):
         if container is not None and container != name:
             continue
         if rm:
-            docker("stop adsabs-%s" % name)
-            docker("rm adsabs-%s" % name)
+            env.run("stop adsabs-%s" % name)
+            env.run("rm adsabs-%s" % name)
         ports = conf.has_key('ports') and ' '.join("-p %s" % p for p in conf['ports']) or ''
         vfrom = conf.has_key('vfrom') and '--volumes-from %s' % conf['vfrom'] or ''
         entrypoint = conf.has_key('entrypoint') and conf['entrypoint'] or ep
-        docker("run -d -t -i --name adsabs-%s %s %s adsabs/%s %s" % (name, ports, vfrom, name, entrypoint))
+        env.run("run -d -t -i --name adsabs-%s %s %s adsabs/%s %s" % (name, ports, vfrom, name, entrypoint))
 #    docker("run -d --name adslogging-data -v /data -v /var/log/supervisor busybox true")
 #    docker("run -d -t -i --name adslogging-logstash -p 9200:9200 -p 9300:9300 -p 9292:9292 -p 6379:6379 --volumes-from adslogging-data adslogging/logstash")
 #    docker("run -d -t -i --name adslogging-statsd -p 8001:8001 -p 8125:8125/udp -p 8126:8126 -p 2003:2003 -p 2004:2004 -p 7002:7002 --volumes-from adslogging-data adslogging/statsd")
