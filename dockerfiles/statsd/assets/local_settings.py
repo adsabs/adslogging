@@ -9,5 +9,6 @@ try:
 except KeyError:
     pass
 
+STORAGE_DIR = '/data/graphite/storage'
 CONTENT_DIR = '/opt/graphite/webapp/content'
 USE_X_FORWARDED_HOST = True
