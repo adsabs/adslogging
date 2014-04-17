@@ -30,6 +30,7 @@ run chmod +x /run.sh
 # cd to the logstash root directory to do the plugin install
 WORKDIR /opt/logstash
 RUN bin/plugin install contrib
+WORKDIR /
 
 # elasticsearch http
 EXPOSE 9200
