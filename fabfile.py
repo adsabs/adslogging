@@ -15,7 +15,7 @@ config = {
         'entrypoint': '',
         },
     'statsd': {
-        'ports': ['8001:8001', '8125:8125/udp', '8126:8126', '2003:2003', '7002:7002'],
+        'ports': ['8001:8001', '8125:8125/udp', '127.0.0.1:8126:8126'],
         'vfrom': 'adsabs-adsloggingdata',
         'entrypoint': '',
     }
