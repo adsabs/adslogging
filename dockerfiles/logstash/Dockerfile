@@ -32,6 +32,12 @@ WORKDIR /opt/logstash
 RUN bin/plugin install contrib
 WORKDIR /
 
+WORKDIR /usr/share/elasticsearch
+RUN bin/plugin -i lmenezes/elasticsearch-kopf
+RUN bin/plugin -i mobz/elasticsearch-head
+RUN bin/plugin -i elasticsearch/marvel/latest
+WORKDIR /
+
 # elasticsearch http
 EXPOSE 9200
 # kibana
