@@ -8,33 +8,36 @@ from fabric.decorators import with_settings
 
 env.base_dir = abspath(dirname(__file__))
 
-config = {
-    'logstash': {
+config = [
+    {
+        'name': 'statsd',
+        'ports': ['8001:8001'], #, '8125:8125/udp', '127.0.0.1:8126:8126'],
+        'vfrom': 'adsabs-adsloggingdata',
+        'entrypoint': '',
+    },
+    {
+        'name': 'logstash',
         'ports': ['9200:9200', '9292:9292', '6379:6379'],
         'vfrom': 'adsabs-adsloggingdata',
+        'links': ['adsabs-statsd:statsd'],
         'entrypoint': '',
-        },
-    'statsd': {
-        'ports': ['8001:8001', '8125:8125/udp', '127.0.0.1:8126:8126'],
-        'vfrom': 'adsabs-adsloggingdata',
-        'entrypoint': '',
-    }
-}
+    },
+]
 
-def create_task(name, conf):
+def create_task(conf):
     def _task():
-        env.containers = [name]
-    t = task(name=name)(_task)
-    setattr(sys.modules[__name__], name, t)
+        env.containers = [conf['name']]
+    t = task(name=conf['name'])(_task)
+    setattr(sys.modules[__name__], conf['name'], t)
     return t
     
 # generate tasks for each defined container
-for container, conf in config.iteritems():
-    create_task(container, conf)
+for conf in config:
+    create_task(conf)
     
 @task
 def all():
-    env.containers = config.keys()
+    env.containers = [x['name'] for x in config]
 
 def docker(cmd, sudo=False, **kwargs):
     with cd(env.base_dir):
@@ -65,12 +68,14 @@ def rmi():
 @task
 @with_settings(warn_only=True)
 def run(ep=''):
-    for name in env.containers:
-        conf = config[name]
+    for conf in config:
+        if conf['name'] not in env.containers:
+            continue
         ports = conf.has_key('ports') and ' '.join("-p %s" % p for p in conf['ports']) or ''
         vfrom = conf.has_key('vfrom') and '--volumes-from %s' % conf['vfrom'] or ''
+        links = conf.has_key('links') and ' '.join("--link %s" % l for l in conf['links']) or ''
         entrypoint = conf.has_key('entrypoint') and conf['entrypoint'] or ep
-        env.docker("run -d -t -i --name adsabs-%s %s %s adsabs/%s %s" % (name, ports, vfrom, name, entrypoint))
+        env.docker("run -d -t -i --name adsabs-%s %s %s %s adsabs/%s %s" % (conf['name'], ports, vfrom, links, conf['name'], entrypoint))
     
 @task
 @with_settings(warn_only=True)
@@ -81,7 +86,7 @@ def data():
         if 'adsabs-adsloggingdata' in containers:
             env.docker("stop adsabs-adsloggingdata")
             env.docker("rm adsabs-adsloggingdata")
-            env.docker('run --name="adsabs-adsloggingdata" -v /data -v /var/log/supervisor ventz/dataos true')
+        env.docker('run --name="adsabs-adsloggingdata" -v /data -v /var/log/supervisor ventz/dataos true')
 
 @task
 @with_settings(warn_only=True)
