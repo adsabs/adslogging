@@ -23,6 +23,7 @@ ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash.json
 ADD assets/logstash.conf /etc/logstash/logstash.conf
 ADD assets/logstash-patterns /etc/logstash/patterns/patterns
 ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD assets/redis.conf /etc/redis/redis.conf
 
 add ./assets/run.sh /run.sh
 run chmod +x /run.sh
