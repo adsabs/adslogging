@@ -9,13 +9,13 @@
                "_all" : {"enabled" : false}
               ,"date_detection" : false
               ,"properties" : {
-                  "message": { "type": "string", "index": "no" }
+                  "message": { "type": "string" }
+                 ,"type": { "type": "string" }    
                  ,"source": { "type": "string", "index": "no" }
                  ,"source_host": { "type": "string", "index": "no" }
                  ,"source_path": { "type": "string", "index": "no" }
                  ,"tags": { "type": "string", "index": "not_analyzed" }
                  ,"@timestamp": { "type": "date", "index": "not_analyzed", "format" : "dateOptionalTime" }
-                 ,"type": { "type": "string", "index": "no" }    
                }
             }
            ,"beer-search" : {
@@ -49,13 +49,13 @@
                    ,"results": { "type": "string", "index": "not_analyzed" }
                 }   
             }
-           ,"beer-error" : {
+           ,"beer-http-err" : {
                "properties" : {
-                    "apacheseverity": { "type": "string", "index": "not_analyzed" }
+                    "severity": { "type": "string", "index": "not_analyzed" }
                    ,"message": { "type" : "string" }
                 }   
             }
-           ,"beer-logs" : {
+           ,"beer-http" : {
                 "dynamic_templates" : [
                     {
                         "template_1" : {
@@ -68,7 +68,7 @@
                     }
                    ,{
                         "template_2" : {
-                            "path_match" : "cookie__NASA*"
+                            "path_match" : "cookie__NASA_ADS*"
                             , "mapping" : {
                                 "type": "string"
                                 , "index" : "not_analyzed"
@@ -89,6 +89,8 @@
                     "http_status": { "type": "long", "index": "not_analyzed" }
                    ,"bot_or_client": { "type" : "string", "index": "not_analyzed" }
                    ,"client_addr": { "type" : "string", "index": "not_analyzed" }
+                   ,"hostname": { "type" : "string", "index": "not_analyzed" }
+                   ,"user_cookie_id": { "type" : "string", "index": "not_analyzed" }
                 }   
             }
            ,"classic-logs" : {

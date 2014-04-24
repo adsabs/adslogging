@@ -8,6 +8,8 @@ from fabric.decorators import with_settings
 
 env.base_dir = abspath(dirname(__file__))
 
+# ORDER IS IMPORTANT HERE 
+# containers that are linked to should appear first
 config = [
     {
         'name': 'statsd',
