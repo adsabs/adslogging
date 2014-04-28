@@ -20,6 +20,7 @@ RUN fakeroot apt-get install -y openjdk-7-jdk
 RUN apt-get install -y elasticsearch logstash supervisor redis-server wget
  
 ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash.json
+ADD assets/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 ADD assets/logstash.conf /etc/logstash/logstash.conf
 ADD assets/logstash-patterns /etc/logstash/patterns/patterns
 ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
