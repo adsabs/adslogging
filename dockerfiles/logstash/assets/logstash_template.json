@@ -80,7 +80,7 @@
                 ]
                ,"properties" : {
                     "path": { "type": "string" }
-                    , "referrer" { "type" : "string" }
+                    ,"referrer": { "type" : "string" }
                 }   
             }
            ,"solr-logs" : {
