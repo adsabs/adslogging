@@ -39,7 +39,5 @@ expose 8125/udp 8126
 expose 2003
 expose 2004
 expose 7002
-# supervisorctl
-EXPOSE 9001
 
 cmd ["/run.sh"]

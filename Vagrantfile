@@ -28,6 +28,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :forwarded_port, guest: 9292, host: 9292
   # graphite admin port
   config.vm.network :forwarded_port, guest: 8001, host: 8001
+  config.vm.network :forwarded_port, guest: 6379, host: 6379
   # statsd port
   config.vm.network :forwarded_port, guest: 8125, host: 8125, protocol: 'udp'
 

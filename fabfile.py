@@ -16,7 +16,6 @@ config = [
         'ports': ['8001:8001', # ngnix proxy to graphite server
                   '8125:8125/udp', # statsd
                   '127.0.0.1:8126:8126', # statsd management
-                  '127.0.0.1:9001:9001', # supervisorctl xml-rpc
                   ],
         'vfrom': 'adsabs-adsloggingdata',
         'entrypoint': '',
@@ -26,7 +25,6 @@ config = [
         'ports': ['9200:9200', # elasticsearch REST
                   '9292:9292', # kibana
                   '6379:6379', # redis
-                  '127.0.0.1:9001:9001', # supervisorctl xml-rpc
                   ],
         'vfrom': 'adsabs-adsloggingdata',
         'links': ['adsabs-statsd:statsd'],
