@@ -8,6 +8,6 @@ mkdir -p /data/elasticsearch
 chown -R elasticsearch /data/elasticsearch
 mkdir -p /data/redis
 
-sed -i -e "s/statsd { host => \"localhost\"/statsd { host => \"$statsd_host\" sender => \"$HOSTNAME\"/g" /etc/logstash/logstash.conf
+sed -i -e "s/statsd { host => \"localhost\"/statsd { host => \"$statsd_host\"/g" /etc/logstash/logstash.conf
 
 /usr/bin/supervisord
