@@ -10,40 +10,34 @@
               ,"date_detection" : false
               ,"properties" : {
                   "message": { "type": "string" }
-                 ,"type": { "type": "string" }    
                  ,"source": { "type": "string", "index": "no" }
                  ,"source_host": { "type": "string", "index": "no" }
                  ,"source_path": { "type": "string", "index": "no" }
                  ,"tags": { "type": "string", "index": "not_analyzed" }
+                 ,"client_addr": { "type" : "string", "index": "not_analyzed" }
+                 ,"hostname": { "type": "string", "index": "not_analyzed" }
+                 ,"bibcode": { "type": "string", "index": "not_analyzed" }
+                 ,"bot_or_client": { "type" : "string", "index": "not_analyzed" }
+                 ,"user_cookie_id": { "type": "string", "index": "not_analyzed" }
+                 ,"http_status": { "type": "long", "index": "not_analyzed" }
                  ,"@timestamp": { "type": "date", "index": "not_analyzed", "format" : "dateOptionalTime" }
                }
             }
            ,"beer-search" : {
                "properties" : {
-                    "user_cookie_id": { "type": "string", "index": "not_analyzed" }
-                   ,"http_status": { "type": "long", "index": "not_analyzed" }
-                   ,"hits": { "type": "long", "index": "not_analyzed" }
+                   "hits": { "type": "long", "index": "not_analyzed" }
                    ,"q": { "type": "string" }
-                   ,"client_addr": { "type" : "string", "index": "not_analyzed" }
                    ,"results": { "type": "string", "index": "not_analyzed" }
                    ,"error_msg": { "type" : "string", "index": "analyzed" }
-                   ,"bot_or_client": { "type" : "string", "index": "not_analyzed" }
                 }   
             }
            ,"beer-abs" : {
                 "properties" : {
-                    "user_cookie_id" : { "type": "string", "index": "not_analyzed" }
-                   ,"bibcode" : { "type": "string", "index": "not_analyzed" }
-                   ,"client_addr": { "type" : "string", "index": "not_analyzed" }
-                   ,"type" : { "type": "string", "index": "not_analyzed" }
-                   ,"bot_or_client": { "type" : "string", "index": "not_analyzed" }
                 }
             }
            ,"beer-api" : {
                "properties" : {
                     "dev_key": { "type": "string", "index": "not_analyzed" }
-                   ,"http_status": { "type": "long", "index": "not_analyzed" }
-                   ,"client_addr": { "type" : "string", "index": "not_analyzed" }
                    ,"hits": { "type": "long", "index": "not_analyzed" }
                    ,"q": { "type": "string" }
                    ,"results": { "type": "string", "index": "not_analyzed" }
@@ -52,7 +46,6 @@
            ,"beer-http-err" : {
                "properties" : {
                     "severity": { "type": "string", "index": "not_analyzed" }
-                   ,"message": { "type" : "string" }
                 }   
             }
            ,"beer-http" : {
@@ -86,45 +79,8 @@
                     }
                 ]
                ,"properties" : {
-                    "http_status": { "type": "long", "index": "not_analyzed" }
-                   ,"bot_or_client": { "type" : "string", "index": "not_analyzed" }
-                   ,"client_addr": { "type" : "string", "index": "not_analyzed" }
-                   ,"hostname": { "type" : "string", "index": "not_analyzed" }
-                   ,"user_cookie_id": { "type" : "string", "index": "not_analyzed" }
-                }   
-            }
-           ,"classic-logs" : {
-                "dynamic_templates" : [
-                    {
-                        "template_1" : {
-                            "path_match" : "qstring__*"
-                            , "mapping" : {
-                                "type": "string"
-                                , "index" : "not_analyzed"
-                            }
-                        }
-                    }
-                   ,{
-                        "template_2" : {
-                            "path_match" : "cookie__NASA*"
-                            , "mapping" : {
-                                "type": "string"
-                                , "index" : "not_analyzed"
-                            }
-                        }
-                    }
-                   ,{
-                        "template_3" : {
-                            "match" : "*"
-                            , "mapping" : {
-                                "type" : "string"
-                                , "index" : "no"
-                            }
-                        }
-                    }
-                ]
-               ,"properties" : {
-                    "http_status": { "type": "long", "index": "not_analyzed" }
+                    "path": { "type": "string" }
+                    , "referrer" { "type" : "string" }
                 }   
             }
            ,"solr-logs" : {
