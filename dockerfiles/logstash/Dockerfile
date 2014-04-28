@@ -47,5 +47,7 @@ EXPOSE 9292
 EXPOSE 9300
 # redis
 EXPOSE 6379 
+# supervisorctl
+EXPOSE 9001
 
 cmd ["/run.sh"]

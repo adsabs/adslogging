@@ -31,7 +31,7 @@ add ./assets/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
 add ./assets/run.sh /run.sh
 run chmod +x /run.sh
 
-# Nginx
+# Nginx proxy to graphite
 expose 8001
 # statsd udp/tcp ports
 expose 8125/udp 8126
@@ -39,5 +39,7 @@ expose 8125/udp 8126
 expose 2003
 expose 2004
 expose 7002
+# supervisorctl
+EXPOSE 9001
 
 cmd ["/run.sh"]
