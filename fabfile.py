@@ -26,7 +26,7 @@ config = [
         'ports': ['9200:9200', # elasticsearch REST
                   '9292:9292', # kibana
                   '6379:6379', # redis
-                  '9002:9002',
+                  '9003:9003',
                   ],
         'vfrom': 'adsabs-adsloggingdata',
         'links': ['adsabs-statsd:statsd'],

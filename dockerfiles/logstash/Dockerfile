@@ -48,6 +48,6 @@ EXPOSE 9300
 # redis
 EXPOSE 6379
 # supervisord
-EXPOSE 9002
+EXPOSE 9003
 
 cmd ["/run.sh"]
