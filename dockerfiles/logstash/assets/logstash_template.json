@@ -29,6 +29,7 @@
                    ,"q": { "type": "string" }
                    ,"results": { "type": "string", "index": "not_analyzed" }
                    ,"error_msg": { "type" : "string", "index": "analyzed" }
+                   ,"qtime": { "type" : "integer" }
                 }   
             }
            ,"beer-abs" : {
@@ -79,7 +80,8 @@
                     }
                 ]
                ,"properties" : {
-                    "path": { "type": "string" }
+                    "path": { "type": "string", "copy_to": "path_unanalyzed" }
+                    ,"path_unanalyzed": { "type" : "string", "index": "not_analyzed" }
                     ,"referrer": { "type" : "string" }
                 }   
             }

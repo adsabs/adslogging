@@ -48,5 +48,5 @@ GENERICAPACHEERROR %{APACHEERRORPREFIX} %{GREEDYDATA:message}
 
 # Solr logs
 SOLRDATE %{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}
-SOLRLOG %{SOLRDATE:timestamp} %{LOGLEVEL:loglevel} %{NOTSPACE:class} %{WORD:method} (?:\[%{WORD:core}\] )%{GREEDYDATA:solr_msg}
+SOLRLOG %{SOLRDATE:timestamp} %{LOGLEVEL:loglevel} %{NOTSPACE:class} %{WORD:method} (?:\[%{WORD:core}\])?%{GREEDYDATA:solr_msg}
 SOLREXCEPTION %{SOLRDATE:timestamp} %{LOGLEVEL:loglevel} %{NOTSPACE:class} %{WORD:method} %{GREEDYDATA:stacktrace}
