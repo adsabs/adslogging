@@ -31,6 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :forwarded_port, guest: 6379, host: 6379
   # statsd port
   config.vm.network :forwarded_port, guest: 8125, host: 8125, protocol: 'udp'
+  config.vm.network :forwarded_port, guest: 9002, host:9002
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.

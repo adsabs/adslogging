@@ -46,6 +46,8 @@ EXPOSE 9292
 # elasticsearch transport
 EXPOSE 9300
 # redis
-EXPOSE 6379 
+EXPOSE 6379
+# supervisord
+EXPOSE 9002
 
 cmd ["/run.sh"]
