@@ -35,7 +35,7 @@
             }
            ,"beer-abs" : {
                 "properties" : {
-                   ,"qtime": { "type": "integer" }
+                   "qtime": { "type": "integer" }
                 }
             }
            ,"beer-api" : {
@@ -95,6 +95,7 @@
                        ,"copy_to": "referrer_unanalyzed" 
                        ,"fields": {
                            "raw": { "type" : "string", "index": "not_analyzed" }
+                       }
                     }
                    ,"resptime": { "type": "integer" }
                    ,"bytes": { "type": "integer" }
