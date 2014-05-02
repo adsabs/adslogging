@@ -4,6 +4,7 @@ from os.path import abspath, dirname
 
 from fabric.api import task, local, env
 from fabric.context_managers import settings, cd, hide
+from fabric.colors import cyan
 from fabric.decorators import with_settings
 
 env.base_dir = abspath(dirname(__file__))
@@ -109,6 +110,65 @@ def stop():
 def rm():
     for c in env.containers:
         env.docker("rm adsabs-%s" % c)
+         
+#### reindexing stuff ###
+TAG_SEPARATOR = ':'
+pyes = None
+
+def get_targets(index_pattern):
+    import fnmatch
+    targets = []
+    indexes = pyes.aliases()
+    for index_name, index_meta in indexes.iteritems():
+        if fnmatch.fnmatch(index_name, index_pattern):
+            aliases = index_meta['aliases'].keys()
+            if len(aliases) > 1:
+                raise Exception("I'm confused! %s has %d aliases!" % (index_name, len(aliases)))
+            elif len(aliases) == 0:
+                alias = index_name
+            else:
+                alias = aliases[0]
+            targets.append((index_name, alias))
+    return targets
+        
+@task
+def reindex(tag, index="logstash-*", es_host="localhost:9200"):
+    # use this one for the basics
+    import pyelasticsearch
+    # use this one only for the reindex command
+    import elasticsearch
+    from elasticsearch.helpers import reindex
+
+    global pyes
+    pyes = pyelasticsearch.ElasticSearch('http://' + es_host)
+    targets = get_targets(index)
+
+    for index_name, alias in targets:
+
+        print(cyan("working on %s" % index_name))
+
+        if TAG_SEPARATOR in index_name:
+            new_index_name = TAG_SEPARATOR.join([index_name[:index_name.rindex(TAG_SEPARATOR)], tag])
+        else:
+            new_index_name = TAG_SEPARATOR.join([index_name, tag])
             
-            
+        print(cyan("new_index_name: %s" % new_index_name))
+
+        print(cyan("reindexing: %s -> %s" % (index_name, new_index_name)))
+        host, port = es_host.split(':')
+        es = elasticsearch.Elasticsearch([{'host': host, 'port': port}])
+        
+        # Return value is a tuple of counts: (reindexed docs, failures)
+        reindexed = reindex(es, index_name, new_index_name)
+        print(cyan("result: %s" % str(reindexed)))
+
+        # if everything went OK
+        if reindexed[0] > 0 and reindexed[1] == 0:
+            if new_index_name != index_name:
+                print(cyan("deleting: %s" % index_name))
+                pyes.delete_index(index_name)
+
+                print(cyan("creating alias %s > %s" % (new_index_name, alias)))
+                actions = [{ "add" : { "index" : new_index_name, "alias" : alias } }]
+                pyes.update_aliases({ "actions" : actions })
             
