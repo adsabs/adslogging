@@ -5,6 +5,7 @@ from os.path import abspath, dirname
 from fabric.api import task, local, env
 from fabric.context_managers import settings, cd, hide
 from fabric.colors import cyan
+from fabric.utils import abort
 from fabric.decorators import with_settings
 
 env.base_dir = abspath(dirname(__file__))
@@ -139,6 +140,9 @@ def reindex(tag, index="logstash-*", es_host="localhost:9200"):
     import elasticsearch
     from elasticsearch.helpers import reindex
 
+    if '.' in tag or ':' in tag:
+        abort("Sorry! '.' and ':' are not allowed in index tag values")
+        
     global pyes
     pyes = pyelasticsearch.ElasticSearch('http://' + es_host)
     targets = get_targets(index)
