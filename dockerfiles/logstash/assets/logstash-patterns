@@ -25,12 +25,13 @@ ADSBITSERVER %{ADSSERVERDATE:logdate}\s+%{WORD:mirror}\s+%{WORD:server}\s+%{IPOR
 # known bots
 GOOGLEBOT \.googlebot\.com$
 MSNBOT \.search\.live\.com$
-YAHOOBOT \.crawl\.yahoo\.net$
+YAHOOBOT \.(yse|crawl)\.yahoo\.net$
 ALEXABOT \.alexa\.com$
 IOPBOT \.ioppublishing\.com$
 CUILLBOT \.cuill\.com$
 ASKBOT \.ask\.com$
-BOTHOST (%{GOOGLEBOT}|%{MSNBOT}|%{YAHOOBOT}|%{ALEXABOT}|%{IOPBOT}|%{CUILLBOT}|%{ASKBOT})
+BAIDUSPIDER ^baiduspider
+BOTHOST (%{GOOGLEBOT}|%{MSNBOT}|%{YAHOOBOT}|%{ALEXABOT}|%{IOPBOT}|%{CUILLBOT}|%{ASKBOT}|%{BAIDUSPIDER})
 
 # known "clients"
 SCICLIENT \.deepwebtech\.com$
