@@ -74,6 +74,15 @@
                     }
                    ,{
                         "template_3" : {
+                            "path_match" : "useragent__*"
+                            , "mapping" : {
+                                "type" : "string"
+                                , "index" : "not_analyzed"
+                            }
+                        }
+                    }
+                   ,{
+                        "template_4" : {
                             "match" : "*"
                             , "mapping" : {
                                 "type" : "string"
