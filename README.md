@@ -1,9 +1,9 @@
-adsabs-vagrant
-==============
+adslogging
+==========
 
-adsabs + vagrant + fabric + puppet = yay, bootstrapped beer machines!
+centralized logging and metric collection for the ADS ecosystem
 
-## Quick start
+## Development Quick start
 
 After installing [Vagrant](http://vagrantup.com/), create and boot the VM:
 
@@ -13,10 +13,20 @@ SSH to the VM:
 
 	vagrant ssh
 
-Initialize stuff:
+Build the docker containers
 
-    fab init
+    cd /vagrant
+    fab all build
 
-Run your app:
+Run the docker containers
 
-	fab run
+	fab data
+    fab all run
+
+Services!
+
+    Elasticsearch: http://localhost:9200
+    Elasticsearch Kopf: http://localhost:9200/_plugin/kopf
+    Kibana: http://localhost:9292
+    Supervisord: http://localhost:9002 & http://localhost:9003
+    Graphite: http://localhost:8001
