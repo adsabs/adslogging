@@ -94,14 +94,12 @@
                ,"properties" : {
                     "path": { 
                         "type": "string"
-                       ,"copy_to": "path_unanalyzed" 
                        ,"fields": {
                            "raw": { "type" : "string", "index": "not_analyzed" }
                        }
                     }
                    ,"referrer": { 
                         "type" : "string"
-                       ,"copy_to": "referrer_unanalyzed" 
                        ,"fields": {
                            "raw": { "type" : "string", "index": "not_analyzed" }
                        }
@@ -137,6 +135,12 @@
                    ,"QTime": { "type": "long", "index": "not_analyzed" }
                    ,"hits": { "type": "long", "index": "not_analyzed" }
                    ,"status": { "type": "long", "index": "not_analyzed" }
+                   ,"path": { 
+                        "type": "string"
+                       ,"fields": {
+                           "raw": { "type" : "string", "index": "not_analyzed" }
+                       }
+                    }
                 }   
             }
         }
