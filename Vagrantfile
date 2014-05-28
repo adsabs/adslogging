@@ -4,14 +4,23 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+options = {}
+options[:memory] = ENV['VAGRANT_MEMORY'] || 1024
+options[:cpus] = ENV['VAGRANT_CPUS'] || 1
+
+puts "NOTICE:"
+puts "This vm will be initialized using #{options[:memory]} MB of memory and #{options[:cpus]} cpus"
+puts "This can be changed by setting VAGRANT_MEMORY and VAGRANT_CPUS"
+puts ""
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "adslogging-precise64"
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = 1024
-    v.cpus = 1
+    v.memory = options[:memory]
+    v.cpus = options[:cpus]
   end
 
   # The url from where the 'config.vm.box' box will be fetched if it
@@ -32,6 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # statsd port
   config.vm.network :forwarded_port, guest: 8125, host: 8125, protocol: 'udp'
   config.vm.network :forwarded_port, guest: 9002, host:9002
+  config.vm.network :forwarded_port, guest: 9003, host:9003
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -54,11 +64,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :shell, :path => "vagrant_bootstrap.sh"
   
-  #config.vm.provision :puppet do |puppet|
-  #  puppet.manifests_path = "puppet/manifests"
-  #  puppet.manifest_file  = "site.pp"
-  #end
-    
 #  config.vm.provision "docker" do |docker|
 #    docker.run "busybox",
 #      args: "--name data -v /data -v /var/log/supervisor",

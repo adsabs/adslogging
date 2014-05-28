@@ -9,11 +9,12 @@ FROM ubuntu:precise
  
 # Install ElasticSearch.
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+#run echo 'deb http://us.archive.ubuntu.com/ubuntu/ precise universe' >> /etc/apt/sources.list
+#run echo 'deb http://us.archive.ubuntu.com/ubuntu/ main universe' >> /etc/apt/sources.list
 RUN apt-key adv --keyserver hkp://pgp.mit.edu --recv D88E42B4
 RUN echo 'deb http://packages.elasticsearch.org/elasticsearch/1.1/debian stable main' > /etc/apt/sources.list.d/elasticsearch.list
 RUN echo 'deb http://packages.elasticsearch.org/logstash/1.4/debian stable main' > /etc/apt/sources.list.d/logstash.list
-RUN apt-get update
+run apt-get -y update
 RUN apt-get install -y build-essential
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
