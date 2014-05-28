@@ -19,17 +19,8 @@ RUN apt-get install -y build-essential
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
 RUN apt-get install -y elasticsearch logstash supervisor redis-server wget
- 
-ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash.json
-ADD assets/logstash.conf /etc/logstash/logstash.conf
-ADD assets/logstash-patterns /etc/logstash/patterns/patterns
-ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD assets/redis.conf /etc/redis/redis.conf
+ # cd to the logstash root directory to do the plugin install
 
-add ./assets/run.sh /run.sh
-run chmod +x /run.sh
-
-# cd to the logstash root directory to do the plugin install
 WORKDIR /opt/logstash
 RUN bin/plugin install contrib
 WORKDIR /
@@ -39,6 +30,16 @@ RUN bin/plugin -i lmenezes/elasticsearch-kopf
 RUN bin/plugin -i mobz/elasticsearch-head
 RUN bin/plugin -i elasticsearch/marvel/latest
 WORKDIR /
+
+ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash.json
+ADD assets/logstash.conf /etc/logstash/logstash.conf
+ADD assets/logstash-patterns /etc/logstash/patterns/patterns
+ADD assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD assets/redis.conf /etc/redis/redis.conf
+ADD assets/force_encoding.rb /opt/logstash/lib/logstash/filters/force_encoding.rb
+
+add ./assets/run.sh /run.sh
+run chmod +x /run.sh
 
 # elasticsearch http
 EXPOSE 9200
