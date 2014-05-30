@@ -1,8 +1,12 @@
 # allow "&" in uri paths due to their appearance in some bibcodes
-URIPATHWITHAMP (?:/[A-Za-z0-9$&.+!*'(){},~:;=#%_\-]*)+
+# and "@" due to appearance in adsgut paths
+ADSURIPATH (?:/[A-Za-z0-9$@&.+!*'(){},~:;=#%_\-]*)+
+
+# allow "^" in uri params
+ADSURIPARAM \?[A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\-\[\]\^]*
 
 # current BEER log format
-COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATHWITHAMP:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:http_version})?)" %{NUMBER:http_status} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy} %{NUMBER:resptime}
+COMBINDEDWITHRESPTIME %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{ADSURIPATH:path}(?:%{ADSURIPARAM:qstring})?(?: HTTP/%{NUMBER:http_version})?)" %{NUMBER:http_status} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy} %{NUMBER:resptime}
 
 # classic ADS format
 COMBINEDWITHCOOKIE %{IPORHOST:client_addr} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:method} %{URIPATHWITHAMP:path}(?:%{URIPARAM:qstring})?(?: HTTP/%{NUMBER:http_version})?)" %{NUMBER:http_status} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent} %{QS:cookie} %{QS:proxy}
