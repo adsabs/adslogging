@@ -19,7 +19,7 @@ RUN apt-get install -y build-essential
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
 RUN apt-get install -y elasticsearch logstash supervisor redis-server wget
- # cd to the logstash root directory to do the plugin install
+# cd to the logstash root directory to do the plugin install
 
 WORKDIR /opt/logstash
 RUN bin/plugin install contrib

@@ -79,15 +79,19 @@ def rmi():
         
 @task
 @with_settings(warn_only=True)
-def run(ep=''):
+def run(ep='', **kwargs):
     for conf in config:
         if conf['name'] not in env.containers:
             continue
         ports = conf.has_key('ports') and ' '.join("-p %s" % p for p in conf['ports']) or ''
         vfrom = conf.has_key('vfrom') and '--volumes-from %s' % conf['vfrom'] or ''
         links = conf.has_key('links') and ' '.join("--link %s" % l for l in conf['links']) or ''
+        evars = ""
+        if len(kwargs):
+            for k,v in kwargs.items():
+                evars += "-e %s=%s" % (k,v)
         entrypoint = conf.has_key('entrypoint') and conf['entrypoint'] or ep
-        env.docker("run -d -t -i --name adsabs-%s %s %s %s adsabs/%s %s" % (conf['name'], ports, vfrom, links, conf['name'], entrypoint))
+        env.docker("run -d -t -i --name adsabs-%s %s %s %s %s adsabs/%s %s" % (conf['name'], evars, ports, vfrom, links, conf['name'], entrypoint))
     
 @task
 @with_settings(warn_only=True)
