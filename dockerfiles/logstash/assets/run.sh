@@ -1,7 +1,7 @@
 #!/bin/bash
 
 statsd_host=${STATSD_PORT_8125_UDP_ADDR-localhost}
-es_heap_size=${ES_HEAP_SIZE-512m}
+es_heap_size=${ES_HEAP_SIZE-4g}
 
 mkdir -p /data/elasticsearch
 chown -R elasticsearch /data/elasticsearch
