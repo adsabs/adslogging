@@ -2,6 +2,22 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 
+# This filter is a mildly hackish workaround for wrongly character encoded event data
+# and the issues it causes in the logstash pipeline. (See: LOGSTASH-1443,LOGSTASH-1308
+# LOGSTASH-1353, etc)
+#
+# Simply list the event fields that are causing you problems, along with a tag to
+# attach for offending events, like so:
+#
+#    force_encoding {
+#        fields => ["path","qstring","message","referrer"]
+#        tag => "_argh_wtf-8_encoding!"
+#    }
+#
+# Any wrongly encoded data in the fields listed will, by default, be forced to ASCII-8BIT.
+# This will, of course, result in a modicum of lost data, but that seems way better than 
+# logstash falling over, amirite?
+
 class LogStash::Filters::ForceEncoding < LogStash::Filters::Base
 
   config_name "force_encoding"
