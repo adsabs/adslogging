@@ -4,7 +4,7 @@ from os.path import abspath, dirname
 
 from fabric.api import task, local, env
 from fabric.context_managers import settings, cd, hide
-from fabric.colors import cyan
+from fabric.colors import cyan, red
 from fabric.utils import abort
 from fabric.decorators import with_settings
 
@@ -46,6 +46,15 @@ def create_task(conf):
 # generate tasks for each defined container
 for conf in config:
     create_task(conf)
+    
+# check that status of vm.overcommit_memory setting which is 
+# needed by redis. See: http://redis.io/topics/admin
+with settings(hide('running'), warn_only=True):
+    vm_oc_memory = local("sysctl -n vm.overcommit_memory", capture=True)
+    if vm_oc_memory == "0":
+        print red("WARNING: vm.overcommit_memory kernel setting is set to 0 which " \
+                  + "which is not recommended for redis (see http://redis.io/topics/admin). " \
+                  + "Run `sysctl vm.overcommit_memory=1` on the host machine to correct this.")
     
 @task
 def all():
