@@ -15,15 +15,10 @@ RUN apt-key adv --keyserver hkp://pgp.mit.edu --recv D88E42B4
 RUN echo 'deb http://packages.elasticsearch.org/elasticsearch/1.1/debian stable main' > /etc/apt/sources.list.d/elasticsearch.list
 RUN echo 'deb http://packages.elasticsearch.org/logstash/1.4/debian stable main' > /etc/apt/sources.list.d/logstash.list
 run apt-get -y update
-RUN apt-get install -y build-essential
+RUN apt-get install -y build-essential vim
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
-RUN apt-get install -y elasticsearch logstash supervisor redis-server wget
-# cd to the logstash root directory to do the plugin install
-
-WORKDIR /opt/logstash
-RUN bin/plugin install contrib
-WORKDIR /
+RUN apt-get install -y elasticsearch logstash logstash-contrib supervisor redis-server wget
 
 WORKDIR /usr/share/elasticsearch
 RUN bin/plugin -i lmenezes/elasticsearch-kopf
