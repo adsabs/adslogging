@@ -18,13 +18,13 @@ run apt-get -y update
 RUN apt-get install -y build-essential vim
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
-RUN apt-get install -y elasticsearch logstash logstash-contrib supervisor redis-server wget
+RUN apt-get install -y elasticsearch logstash logstash-contrib redis-server wget python-pip
+RUN pip install 'supervisor>=3.0b1'
 
 WORKDIR /usr/share/elasticsearch
 RUN bin/plugin -i lmenezes/elasticsearch-kopf
 RUN bin/plugin -i mobz/elasticsearch-head
 RUN bin/plugin -i elasticsearch/marvel/latest
-WORKDIR /
 
 ADD assets/logstash_template.json /etc/elasticsearch/templates/logstash.json
 ADD assets/logstash.conf /etc/logstash/logstash.conf

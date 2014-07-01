@@ -16,5 +16,5 @@ chown -R www-data /data/graphite/storage
 # carbon writes it's pid here
 chown -R www-data /opt/graphite/storage
 
-/usr/bin/supervisord
+/usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 

@@ -8,11 +8,12 @@ run echo 'deb http://us.archive.ubuntu.com/ubuntu/ precise universe' >> /etc/apt
 run apt-get -y update
 
 # Install required packages
-run apt-get -y install git nodejs libssl-dev python-ldap python-cairo python-django python-twisted python-django-tagging python-simplejson python-memcache python-pysqlite2 python-support python-pip gunicorn supervisor nginx-light
-run apt-get -y install curl screen tree
+run apt-get -y install git nodejs libssl-dev python-ldap python-cairo python-django python-twisted python-django-tagging python-simplejson python-memcache python-pysqlite2 python-support python-pip gunicorn nginx-light
+run apt-get -y install curl screen tree vim
 run pip install whisper
 run pip install --install-option="--prefix=/opt/graphite" --install-option="--install-lib=/opt/graphite/lib" carbon
 run pip install --install-option="--prefix=/opt/graphite" --install-option="--install-lib=/opt/graphite/webapp" graphite-web
+run pip install 'supervisor>=3.0b1'
 
 # install statsd
 run /usr/bin/git clone https://github.com/etsy/statsd.git /opt/statsd
