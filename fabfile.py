@@ -4,6 +4,7 @@ from os.path import abspath, dirname
 
 from fabric.api import task, local, env
 from fabric.context_managers import settings, cd, hide
+from fabric.contrib.console import confirm
 from fabric.colors import cyan, red
 from fabric.utils import abort
 from fabric.decorators import with_settings
@@ -18,7 +19,7 @@ config = [
         'ports': ['8001:8001', # ngnix proxy to graphite server
                   '8125:8125/udp', # statsd
                   '127.0.0.1:8126:8126', # statsd management
-                  '9002:9002',
+                  '9002:9002', # supervisord
                   ],
         'vfrom': 'adsabs-adsloggingdata',
         'entrypoint': '',
@@ -28,7 +29,7 @@ config = [
         'ports': ['9200:9200', # elasticsearch REST
                   '9292:9292', # kibana
                   '6379:6379', # redis
-                  '9003:9003',
+                  '9003:9003', # supervisord
                   ],
         'vfrom': 'adsabs-adsloggingdata',
         'links': ['adsabs-statsd:statsd'],
@@ -60,10 +61,20 @@ with settings(hide('running'), warn_only=True):
 def all():
     env.containers = [x['name'] for x in config]
 
+env.show_cmd = False
+
+@task
+def show():
+    env.show_cmd = True
+
 def docker(cmd, sudo=False, **kwargs):
     with cd(env.base_dir):
         sudo = sudo and "sudo" or ""
-        return local("%s docker %s" % (sudo,cmd), **kwargs)
+        cmd = "%s docker %s" % (sudo, cmd)
+        if env.show_cmd:
+            print cyan(cmd) 
+        else:
+            return local(cmd, **kwargs)
 
 def sudo_docker(cmd, **kwargs):
     return docker(cmd, True, **kwargs)
@@ -72,42 +83,63 @@ env.docker = docker
 
 @task
 def sudo():
+    """
+    execute commands via sudo
+    """
     env.docker = sudo_docker
 
 @task
 @with_settings(warn_only=True)
 def build():
+    """
+    build the containers
+    """
     for name in env.containers:
         env.docker("build -t adsabs/%s dockerfiles/%s" % (name, name))
         
 @task
 @with_settings(warn_only=True)
 def rmi():
+    """
+    remove the images
+    """
     for name in env.containers:
         env.docker("rmi adsabs/%s" % name)
         
 @task
 @with_settings(warn_only=True)
 def run(ep='', **kwargs):
+    """
+    execute the containers
+    
+    ep - specify an alternate entrypoint, e.g., "ep=bash"
+    **kwargs - additional kwargs will be converted to environment variables passed to container
+    
+    """
     for conf in config:
         if conf['name'] not in env.containers:
             continue
         ports = conf.has_key('ports') and ' '.join("-p %s" % p for p in conf['ports']) or ''
         vfrom = conf.has_key('vfrom') and '--volumes-from %s' % conf['vfrom'] or ''
         links = conf.has_key('links') and ' '.join("--link %s" % l for l in conf['links']) or ''
-        evars = ""
-        if len(kwargs):
-            for k,v in kwargs.items():
-                evars += "-e %s=%s" % (k,v)
+        evars = len(kwargs) and ' '.join(["-e %s=%s" % (x[0],x[1]) for x in kwargs.items()]) or ''
+        
         entrypoint = conf.has_key('entrypoint') and conf['entrypoint'] or ep
-        env.docker("run -d -t -i --name adsabs-%s %s %s %s %s adsabs/%s %s" % (conf['name'], evars, ports, vfrom, links, conf['name'], entrypoint))
+        env.docker("run -d -t -i --name adsabs-%s %s %s %s %s adsabs/%s %s" \
+                   % (conf['name'], evars, ports, vfrom, links, conf['name'], entrypoint))
     
 @task
 @with_settings(warn_only=True)
 def data():
+    """
+    remove and recreate the shared data container. WARNING! this will delete existing data & logs!
+    """
     # start the data container
     with settings(hide('running', 'stdout', 'stderr')):
         containers = env.docker('ps -a', capture=True)
+        if not confirm("This will erase all existing data. Are you sure?", default=False):
+            print cyan("OK, nevermind")
+            return
         if 'adsabs-adsloggingdata' in containers:
             env.docker("stop adsabs-adsloggingdata")
             env.docker("rm adsabs-adsloggingdata")
@@ -116,15 +148,38 @@ def data():
 @task
 @with_settings(warn_only=True)
 def stop():
+    """
+    stop the containers
+    """
     for c in env.containers:
         env.docker("stop adsabs-%s" % c)
     
 @task
 @with_settings(warn_only=True)
 def rm():
+    """
+    remove the containers
+    """
     for c in env.containers:
         env.docker("rm adsabs-%s" % c)
          
+@task
+@with_settings(warn_only=True)
+def gen_certs(container, name):
+    """
+    generate ssl certificates for use by other services communicating with logstash
+    e.g., logstash-forwarder
+    """
+    path = os.path.join("dockerfiles", container, "certs")
+    local("mkdir -p %s" % path)
+    local("openssl req -x509 -batch -nodes -newkey rsa:2048 -keyout %s/%s.key -out %s/%s.crt" % (path, name, path, name))
+         
+@task
+@with_settings(warn_only=True)
+def data_backup(output_dir, output_file="adsloggingdata.tar"):
+    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar -cvf /backup/%s /data" \
+               % (output_dir, output_file))
+
 #### reindexing stuff ###
 TAG_SEPARATOR = ':'
 pyes = None
@@ -147,6 +202,9 @@ def get_targets(index_pattern):
         
 @task
 def reindex(tag, index="logstash-*", es_host="localhost:9200"):
+    """
+    reindex the existing elasticsearch data. for use after indexing template changes
+    """
     # use this one for the basics
     import pyelasticsearch
     # use this one only for the reindex command
