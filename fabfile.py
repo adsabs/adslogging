@@ -179,6 +179,18 @@ def gen_certs(container, name):
 def data_backup(output_dir, output_file="adsloggingdata.tar"):
     env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar -cvf /backup/%s /data" \
                % (output_dir, output_file))
+    
+@task
+@with_settings(warn_only=True)
+def rotate_backups(backup_dir, force=False):
+    from tempfile import NamedTemporaryFile
+    assert os.path.exists(backup_dir)
+    with NamedTemporaryFile() as f:
+        print >>f, "%s/*.tar {\nrotate 7\ndaily\ncompress\nmissingok\nnocreate\n}" % os.path.abspath(backup_dir)
+        f.flush()
+        force = force and "-f" or ""
+        statefile = "%s/backup.state" % os.path.abspath(backup_dir)
+        local("logrotate %s -s %s -v %s" % (force, statefile, f.name))
 
 #### reindexing stuff ###
 TAG_SEPARATOR = ':'
