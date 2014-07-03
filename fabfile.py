@@ -130,16 +130,17 @@ def run(ep='', **kwargs):
     
 @task
 @with_settings(warn_only=True)
-def data():
+def data(yes=False):
     """
     remove and recreate the shared data container. WARNING! this will delete existing data & logs!
     """
     # start the data container
     with settings(hide('running', 'stdout', 'stderr')):
         containers = env.docker('ps -a', capture=True)
-        if not confirm("This will erase all existing data. Are you sure?", default=False):
-            print cyan("OK, nevermind")
-            return
+        if not yes:
+            if not confirm("This will erase all existing data. Are you sure?", default=False):
+                print cyan("OK, nevermind")
+                return
         if 'adsabs-adsloggingdata' in containers:
             env.docker("stop adsabs-adsloggingdata")
             env.docker("rm adsabs-adsloggingdata")
