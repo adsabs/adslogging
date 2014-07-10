@@ -183,7 +183,8 @@ def data_backup(output_dir, output_file="adsloggingdata.tar"):
     env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar -cf /backup/%s /data" \
                % (tmpdir, output_file))
     local("mv %s %s" % (os.path.join(tmpdir, output_file), os.path.join(output_dir, output_file)))
-    local("rmdir -rf %s" % tmpdir)
+    # force remove the temp directory in case something went wrong with previous comand
+    local("rm -rf %s" % tmpdir)
     
 @task
 @with_settings(warn_only=True)
