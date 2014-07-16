@@ -180,7 +180,7 @@ def gen_certs(container, name):
 def data_backup(output_dir, output_file="adsloggingdata.tar"):
     from tempfile import mkdtemp
     tmpdir = mkdtemp()
-    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar -cf /backup/%s /data" \
+    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar --ignore-failed-read -cf /backup/%s /data" \
                % (tmpdir, output_file))
     local("mv %s %s" % (os.path.join(tmpdir, output_file), os.path.join(output_dir, output_file)))
     # force remove the temp directory in case something went wrong with previous comand
@@ -196,7 +196,7 @@ def rotate_backups(backup_dir, force=False):
         f.flush()
         force = force and "-f" or ""
         statefile = "%s/backup.state" % os.path.abspath(backup_dir)
-        local("/usr/sbin/logrotate %s -s %s -v %s" % (force, statefile, f.name))
+        local("/usr/sbin/logrotate %s -s %s %s" % (force, statefile, f.name))
 
 #### reindexing stuff ###
 TAG_SEPARATOR = ':'
