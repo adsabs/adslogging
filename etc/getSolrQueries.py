@@ -75,7 +75,7 @@ def main():
   try:
     print >> args.output, '\n'.join(URLs)
   except AttributeError:
-    with open(args.output,'w') as fp:
+    with open(args.output[0],'w') as fp:
       print >> fp, '\n'.join([u.encode('utf-8') for u in URLs])
 
 
