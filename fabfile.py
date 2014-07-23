@@ -180,7 +180,7 @@ def gen_certs(container, name):
 def data_backup(output_dir, output_file="adsloggingdata.tar"):
     from tempfile import mkdtemp
     tmpdir = mkdtemp()
-    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar --ignore-failed-read -cf /backup/%s /data" \
+    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup debian tar --ignore-failed-read -cf /backup/%s /data" \
                % (tmpdir, output_file))
     local("mv %s %s" % (os.path.join(tmpdir, output_file), os.path.join(output_dir, output_file)))
     # force remove the temp directory in case something went wrong with previous comand
