@@ -180,7 +180,15 @@ def gen_certs(container, name):
 def data_backup(output_dir, output_file="adsloggingdata.tar"):
     from tempfile import mkdtemp
     tmpdir = mkdtemp()
-    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup debian tar --ignore-failed-read -cf /backup/%s /data" \
+    
+    # TODO: use elasticsearch snapshots to do this
+    # SEE: http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/modules-snapshots.html
+    # 1. create snapshot registry
+    # 2. create snapshot
+    # 3. tar the snapshot as before
+    # 4. delete snapshot
+    # 5. delete registry?
+    env.docker("run --rm --volumes-from adsabs-adsloggingdata -v %s:/backup busybox tar -cf /backup/%s /data" \
                % (tmpdir, output_file))
     local("mv %s %s" % (os.path.join(tmpdir, output_file), os.path.join(output_dir, output_file)))
     # force remove the temp directory in case something went wrong with previous comand
