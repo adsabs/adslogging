@@ -1,6 +1,8 @@
 adslogging
 ==========
 
+**Note**: This is a remnant from the building of ADS 2.0. For a current implementation, see `aws_elk`.
+
 centralized logging and metric collection for the ADS ecosystem
 
 ## Development Quick start
